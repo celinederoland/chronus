@@ -1,0 +1,55 @@
+version: '2'
+
+services:
+  php-web-server:
+    build: build/apache-php7.1
+    environment:
+      XDEBUG_CONFIG: "remote_host=172.21.0.1"
+    volumes:
+      - ./environment/php/reporting.ini:/usr/local/etc/php/conf.d/reporting.ini
+      - ./environment/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+    networks:
+      - front
+      - back
+
+  php-test-server:
+    build: build/apache-php7.1
+    volumes:
+      - ./environment/php/reporting.ini:/usr/local/etc/php/conf.d/reporting.ini
+    command: exit
+    networks:
+      - test
+
+  php-composer:
+    build: build/composer-php7.1
+    volumes:
+      - ../cache/.composer:/tmp
+
+  java-tomcat-server:
+    image: tomcat:9-jre8-alpine
+    networks:
+      - front
+      - back
+
+  java-maven:
+    image: maven:3.5.2-jdk-8
+    working_dir: /usr/src/
+    volumes:
+      - ../cache/.m2:/root/.m2
+    command: mvn package -DskipTests
+
+  redis-database:
+    image: "redis:alpine"
+    command: redis-server --appendonly yes
+    networks:
+      - back
+
+  mysql-database:
+    image: mysql:5.7
+    networks:
+      - back
+
+  mongodb-database:
+    image: mongo:3.7-jessie
+    networks:
+      - back

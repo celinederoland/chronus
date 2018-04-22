@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  accountancy-tests-data:
+    extends:
+      file: ../../docker-services.yml
+      service: mysql-database
+    networks:
+      - test
+volumes:
+  - accountancy-tests-data:/data
+
+volumes:
+  accountancy-tests-data:
+    driver: local

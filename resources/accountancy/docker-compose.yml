@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  accountancy-data:
+    extends:
+      file: ../../docker-services.yml
+      service: mysql-database
+    networks:
+      - back
+volumes:
+  - accountancy-data:/data
+
+volumes:
+  accountancy-data:
+    driver: local

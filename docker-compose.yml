@@ -1,0 +1,70 @@
+version: '2'
+
+services:
+
+  ######################################################################
+  # Accountancy - A java client/server application, managed with maven #
+  ######################################################################
+
+  # the tomcat server NOM DE CODE : demeter
+  accountancy:
+    extends:
+      file: projects/accountancy/docker-compose.yml
+      service: accountancy
+    depends_on:
+      - accountancy-data
+
+  # sandbox tomcat server, used for testing. contains the same app, but with test database and test config variables
+  accountancy-test-api:
+    extends:
+      file: projects/accountancy/docker-compose.yml
+      service: accountancy
+    depends_on:
+      - accountancy-tests-data
+    networks:
+      - test
+
+  # the maven container builds the .war file to mount in the Tomcat server
+  accountancy-maven:
+    extends:
+      file: projects/accountancy/docker-compose.yml
+      service: accountancy-maven
+    depends_on:
+      - accountancy-tests-data
+
+  # the main database
+  accountancy-data:
+    extends:
+      file: resources/accountancy/docker-compose.yml
+      service: accountancy-data
+
+  # the test database
+  accountancy-tests-data:
+    extends:
+      file: resources/accountancy-test/docker-compose.yml
+      service: accountancy-tests-data
+
+
+  ############################################################################
+  # HAPROXY - Give access to the servers on the front network, throw port 80 #
+  ############################################################################
+  
+  haproxy:
+    image: haproxy:1.7.9-alpine
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - 80:80
+    networks:
+      - front
+    depends_on:
+      - basicphp
+      - accountancy
+
+networks:
+  front:
+    driver: bridge
+  back:
+    driver: bridge
+  test:
+    driver: bridge

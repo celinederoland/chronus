@@ -1,0 +1,41 @@
+version: '2'
+
+services:
+
+  # Accountancy - A java client/server application, managed with maven
+
+  accountancy:
+    volumes:
+      - ../code/accountancy/target/Accountancy.war:/usr/local/tomcat/webapps/ROOT.war
+    environment:
+      ACCOUNTANCY_DATABASE: accountancy-data:3306/accountancy?user=root&password=secret&useSSL=false
+      ACCOUNTANCY_TOKEN: secret
+   ports:
+      - 8001:8080
+
+  accountancy-test-api:
+    volumes:
+      - ../code/accountancy/target/Accountancy.war:/usr/local/tomcat/webapps/ROOT.war
+    environment:
+      ACCOUNTANCY_DATABASE: accountancy-tests-data:3306/accountancy?user=root&password=secret&useSSL=false
+      ACCOUNTANCY_TOKEN: secret
+    ports:
+      - 8002:8080
+
+  accountancy-maven:
+    volumes:
+      - ../code/accountancy:/usr/src
+
+  accountancy-data:
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: accountancy
+    ports:
+      - 3000:3306
+
+  accountancy-tests-data:
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: accountancy
+    ports:
+      - 3001:3306

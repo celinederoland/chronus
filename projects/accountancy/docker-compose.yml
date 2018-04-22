@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  accountancy:
+    extends:
+      file: ../../docker-services.yml
+      service: java-tomcat-server
+    environment:
+      ACCOUNTANCY_DATABASE: localhost
+      ACCOUNTANCY_TOKEN: secret
+    networks:
+      - front
+      - back
+
+  accountancy-maven:
+    extends:
+      file: ../../docker-services.yml
+      service: java-maven
+    environment:
+      ACCOUNTANCY_DATABASE: accountancy-tests-data:3306/accountancy?user=root&password=secret&useSSL=false
+      ACCOUNTANCY_TOKEN: secret
+    networks:
+      - test
