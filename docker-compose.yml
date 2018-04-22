@@ -32,6 +32,14 @@ services:
     depends_on:
       - accountancy-tests-data
 
+  # the maven container to execute the tests
+  accountancy-maven-test:
+    extends:
+      file: ../../docker-services.yml
+      service: java-maven-tests
+    depends_on:
+      - accountancy-tests-data
+
   # the main database
   accountancy-data:
     extends:

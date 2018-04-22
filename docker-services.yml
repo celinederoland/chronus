@@ -38,6 +38,15 @@ services:
       - ../cache/.m2:/root/.m2
     command: mvn package -DskipTests
 
+  java-maven-tests:
+    image: maven:3.5.2-jdk-8
+    working_dir: /usr/src/
+    volumes:
+      - ../cache/.m2:/root/.m2
+    command: mvn test
+    networks:
+      - test
+
   redis-database:
     image: "redis:alpine"
     command: redis-server --appendonly yes

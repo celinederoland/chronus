@@ -21,3 +21,14 @@ services:
       ACCOUNTANCY_TOKEN: secret
     networks:
       - test
+
+  accountancy-maven-test:
+    extends:
+      file: ../../docker-services.yml
+      service: java-maven-tests
+    environment:
+      ACCOUNTANCY_DATABASE: accountancy-tests-data:3306/accountancy?user=root&password=secret&useSSL=false
+      ACCOUNTANCY_TOKEN: secret
+      ACCOUNTANCY_URL: accountancy-test-api:8080
+    networks:
+      - test
